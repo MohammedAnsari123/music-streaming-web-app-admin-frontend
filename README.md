@@ -1,135 +1,117 @@
-# StreamLite - Admin Dashboard Portal
+# StreamLite - Admin CMS Portal 🛡️
 
-The **StreamLite Admin Portal** is a secure, standalone operational console designed for platform administrators. It is completely decoupled from the User Frontend to ensure security and logical separation of concerns. It provides a comprehensive interface for managing the content library, users, and analyzing platform performance.
+The **StreamLite Admin Portal** is the Content Management System (CMS) and control tower for the entire platform. Designed for operational security and efficiency, it runs as a completely independent application from the user frontend.
 
----
-
-## 📚 Table of Contents
-- [Overview](#overview)
-- [✨ Key Features](#-key-features)
-- [🛠️ Technology Stack](#️-technology-stack)
-- [📂 Project Structure](#-project-structure)
-- [🛡️ Security Architecture](#️-security-architecture)
-- [⚙️ Setup & Installation](#️-setup--installation)
+> **Status:** 🟢 Active | **Type:** Internal Tool | **Served on:** `localhost:5174`
 
 ---
 
-## Overview
-Built with **React** and **Vite**, the Admin Portal offers a dashboard experience similar to a CMS (Content Management System). It allows admins to populate the app with content (Songs/Podcasts) that is then served to the users. It connects to the same backend API as the user app but uses distinct endpoints protected by Admin-scope middleware.
+## 📑 Table of Contents
+1.  [CMS Architecture](#-cms-architecture)
+2.  [Feature Deep Dive](#-feature-deep-dive)
+3.  [Security & Auth](#-security--auth)
+4.  [Technology Stack](#-technology-stack)
+5.  [Setup & Usage](#-setup--usage)
 
 ---
 
-## ✨ Key Features
+## 🏗 CMS Architecture
 
-### 📊 Dashboard Analytics
-*   **Real-time Stats:** Visual cards displaying Total Songs, Total Podcasts, Active Artists, and Categories.
-*   **Library Overview:** Tabulated views of the current content inventory with quick actions (Delete/Edit).
+The Admin Portal is a "Thick Client" dashboard. It performs heavy lifting in terms of file processing (multipart forms) before sending data to the backend storage services.
 
-### 📤 Content Management System (CMS)
-*   **Track Upload:** Drag-and-drop interface to upload Audio Files (`.mp3`) and Cover Art (`.jpg`).
-    *   Metadata input: Title, Artist, Album, Genre/Category.
-    *   Progress indication during upload (`Uploading...` states).
-*   **Podcast Management:**
-    *   **Create Series:** Define new podcasts with Publishers and Descriptions.
-    *   **Publish Episodes:** Upload individual episodes linked to a parent Podcast.
-
-### 👥 User Administration
-*   **User List:** View registered users (Name, Email, Join Date).
-*   **Moderation:** Capability to view user details (expandable to banning/removing users if API supports).
-
-### 🔔 User Feedback
-*   **Toast Notifications:** Instant visual feedback (Success/Error) using `react-toastify` for all actions (Upload success, Login failure, etc.).
-
----
-
-## 🛠️ Technology Stack
-
-### Core Frameworks
-*   **[React 18+](https://react.dev/):** Component-based UI library.
-*   **[Vite](https://vitejs.dev/):** Fast build tool and dev server.
-
-### Styling
-*   **[Tailwind CSS](https://tailwindcss.com/) (v4 via PostCSS):** Rapid styling.
-*   **[Lucide React](https://lucide.dev/):** Professional SVG icons for the dashboard interface.
-*   **CSS Animations:** Smooth fade-ins and transitions (`index.css`).
-
-### State & Routing
-*   **Context API:**
-    *   `AuthContext`: Handles Admin Login state and JWT storage in `localStorage`.
-*   **[React Router DOM](https://reactrouter.com/):** Handles navigation (`/admin/dashboard`, `/admin/upload`).
-    *   **Protected Routes:** Higher-Order Components ensuring unauthenticated users cannot access dashboard pages.
-
----
-
-## 📂 Project Structure
-
-```text
-admin/
-├── src/
-│   ├── components/
-│   │   ├── Sidebar.jsx        # Persistent navigation rail
-│   │   ├── AnimatedBackground # Login screen aesthetics
-│   │   └── ...
-│   │
-│   ├── context/
-│   │   ├── AuthContext.jsx    # Admin Session Logic
-│   │   ├── PrivateRoutes.jsx  # Security Wrapper
-│   │   └── ...
-│   │
-│   ├── pages/
-│   │   ├── adminLogin.jsx     # Secure Entry Point
-│   │   ├── adminDashboard.jsx # Main Stats & Tables
-│   │   ├── UploadTrack.jsx    # Music Upload Form
-│   │   ├── UploadPodcast.jsx  # Podcast Creation Form
-│   │   ├── UploadEpisode.jsx  # Episode Upload Form
-│   │   ├── AdminUsers.jsx     # User Management
-│   │   └── AdminLibrary.jsx   # Media List View
-│   │
-│   ├── App.jsx                # Route Config
-│   ├── main.jsx               # Entry Point & ToastProvider
-│   └── index.css              # Global Styles
-│
-├── package.json               # Dependencies
-├── postcss.config.js          # Tailwind/PostCSS Setup
-└── tailwind.config.js         # Theme Config
+### Workflow: Adding a Song
+```mermaid
+sequenceDiagram
+    Admin->>UploadForm: Selects .mp3 & Cover Art
+    UploadForm->>Preview: Validates File Types
+    Admin->>Submit: Clicks "Upload"
+    Submit->>Backend: POST /api/admin/tracks (Multipart)
+    Backend->>Cloudinary: Uploads Assets
+    Cloudinary->>Backend: Returns URLs
+    Backend->>DB: Saves Metadata + URLs
+    Backend->>Admin: 200 OK
+    Admin->>Toast: "Track Uploaded Successfully"
 ```
 
 ---
 
-## 🛡️ Security Architecture
+## 🔍 Feature Deep Dive
 
-The Admin Portal uses a **JWT-based** security model:
-1.  **Login:** Admin submits credentials to `/api/admin/login`.
-2.  **Token Storage:** On success, a `token` is stored in the browser's `localStorage`.
-3.  **Protected Routes:** Attempts to access `/admin/*` routes check for this token via `PrivateRoutes.jsx`. If missing, the user is forced to `/admin/login`.
-4.  **API Requests:** Every request to the backend includes the `Authorization: Bearer <token>` header to validate privileges server-side.
+### 1. Dashboard Analytics
+The entry point (`adminDashboard.jsx`) aggregates vital health metrics:
+*   **Total Songs/Podcasts:** Live count from database.
+*   **User Base:** Active user count.
+*   **Visuals:** Uses Lucide Icons for clean, professional data visualization.
+
+### 2. Media Upload Studio
+We provide specialized forms for different media types:
+*   **`UploadTrack.jsx`**: For single music files. Includes genre categorization.
+*   **`UploadPodcast.jsx`**: Creates a Podcast "Series" container.
+*   **`UploadEpisode.jsx`**: Adds episodes to existing series. Matches ID via dropdown.
+
+### 3. User Management
+A tabular view (`AdminUsers.jsx`) to oversee the community.
+*   **Data:** Name, Email, Registration Date.
+*   **Actions:** (Future Roadmap) Ban/Suspend users directly from UI.
 
 ---
 
-## ⚙️ Setup & Installation
+## 🔐 Security & Auth
 
-### Prerequisites
-*   Node.js & NPM
-*   Running Backend (on port 3000)
+Security is paramount for the admin panel.
 
-### Installation
+### The `PrivateRoutes` HOC
+We utilize a Higher-Order Component pattern for route protection.
 
-1.  **Navigate to directory:**
-    ```bash
-    cd admin
-    ```
+*   **Logic:**
+    1.  Check `localStorage` for `token`.
+    2.  If token exists -> Render Child Component (The Dashboard).
+    3.  If token missing -> **Redirect** immediately to `/admin/login`.
 
-2.  **Install Dependencies:**
-    ```bash
-    npm install
-    ```
-    *Note: If you encounter PostCSS errors, ensure `@tailwindcss/postcss` is installed.*
+### Admin Scope
+The backend enforces `role: 'admin'` checks on all API endpoints triggered by this app. Even if a user steals a token, they cannot perform admin actions without the correct role claim in the JWT.
 
-3.  **Run Development Server:**
-    ```bash
-    npm run dev
-    ```
-    The admin portal usually runs on **port 5174** (to avoid conflict with the User App on 5173).
+---
 
-4.  **Access:**
-    Open `http://localhost:5174` in your browser.
+## 💻 Technology Stack
+
+This app diverges slightly from the frontend stack to prioritize utility and stability.
+
+| Tool | Context |
+| :--- | :--- |
+| **Vite** | Build Tool. |
+| **React** | Framework. |
+| **Tailwind CSS v4** | (Via `@tailwindcss/postcss`) Latest styling engine. |
+| **React Toastify** | Critical for CMS feedback (e.g., "Upload Failed: File too large"). |
+| **Lucide React** | Consistent Admin UI iconography. |
+
+---
+
+## 🛠 Setup & Usage
+
+### 1. Installation
+The admin app is a separate Node project.
+```bash
+cd admin
+npm install
+# Note: Ensure @tailwindcss/postcss is installed if using v4 features
+npm install -D @tailwindcss/postcss
+```
+
+### 2. Running the Portal
+```bash
+npm run dev
+```
+*   **Port:** Default is `5173`, but if Frontend is running, Vite auto-switches to `5174`.
+*   **URL:** `http://localhost:5174/admin/login`
+
+### 3. Default Credentials
+(Stored in your Database)
+*   **Email:** `admin@streamlite.com`
+*   **Password:** (As configured in seed script)
+
+---
+
+## 📝 Contribution Guide
+*   **New Pages:** Add to `pages/` directory and register in `App.jsx` inside `<PrivateRoutes>`.
+*   **Styling:** Adhere to the "Dark Mode" aesthetic defined in `index.css`.
