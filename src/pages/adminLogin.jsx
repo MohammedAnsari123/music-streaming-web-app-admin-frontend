@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
-import AnimatedBackground from '../components/AnimatedBackground'
+import Particles from '../components/Particles'
 
 const adminLogin = () => {
     const [adminEmail, setAdminEmail] = useState('')
@@ -28,20 +28,34 @@ const adminLogin = () => {
             const data = await response.json();
 
             if (response.ok) {
-                alert('Admin Login Success')
+                // Success
                 login(data.user, data.token)
                 navigate('/admin/dashboard')
             } else {
-                alert('Admin Login Failed')
+                // Failure - specific error message
+                alert(data.error || 'Admin Login Failed')
             }
         } catch (error) {
-            console.log(error)
+            console.error("Login request failed:", error)
+            alert('Connection Error. Please try again.')
         }
     }
 
     return (
         <div className="relative min-h-screen w-full bg-black text-white font-sans overflow-hidden flex items-center justify-center">
-            <AnimatedBackground />
+            <div className="absolute inset-0 z-0">
+                <Particles
+                    particleColors={['#22c55e', '#ffffff']}
+                    particleCount={200}
+                    particleSpread={10}
+                    speed={0.1}
+                    particleBaseSize={100}
+                    moveParticlesOnHover={true}
+                    alphaParticles={false}
+                    disableRotation={false}
+                    className="h-full w-full"
+                />
+            </div>
 
             <div className="relative z-10 w-full max-w-md p-8">
                 <form onSubmit={handleSubmit} className="bg-white/5 backdrop-blur-xl border border-white/10 p-10 rounded-3xl shadow-2xl animate-in fade-in zoom-in duration-500">

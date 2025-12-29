@@ -4,6 +4,9 @@ import { AuthProvider } from './context/AuthContext'
 import PrivateRoutes from './context/PrivateRoutes'
 
 // Admin Pages
+// Admin Pages
+import AdminLanding from './pages/AdminLanding'
+import AdminRegister from './pages/AdminRegister'
 import AdminLogin from './pages/adminLogin'
 import AdminDashboard from './pages/adminDashboard'
 import UploadTrack from './pages/UploadTrack'
@@ -17,8 +20,9 @@ function App() {
     <AuthProvider>
       <div className="min-h-screen bg-black text-white">
         <Routes>
-          <Route path='/' element={<Navigate to="/admin/dashboard" replace />} />
-
+          {/* Public Routes */}
+          <Route path='/' element={<AdminLanding />} />
+          <Route path='/admin/register' element={<AdminRegister />} />
           <Route path='/admin/login' element={<AdminLogin />} />
 
           <Route element={<PrivateRoutes />}>
