@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import axiosClient from '../api/axiosClient';
 import Sidebar from '../components/Sidebar';
 import { Upload, Mic, PlayCircle, CheckCircle, AlertCircle } from 'lucide-react';
 
@@ -15,11 +16,19 @@ const UploadEpisode = () => {
     const [status, setStatus] = useState(null);
 
     useEffect(() => {
-        // Fetch Pods for Dropdown
-        fetch('http://localhost:3000/api/podcasts')
-            .then(res => res.json())
-            .then(data => setPodcasts(data))
-            .catch(err => console.error(err));
+        const fetchPodcasts = async () => {
+            try {
+                // Note: /api/podcasts is likely public, but we can use axiosClient.
+                // If it needs auth, axiosClient handles it. If public, it still works.
+                // Assuming it's the public endpoint, using axiosClient ensures base URL is correct.
+                const res = await axiosClient.get('/podcasts');
+                setPodcasts(res.data);
+            } catch (err) {
+                console.error("Error fetching podcasts:", err);
+            }
+        };
+
+        fetchPodcasts();
     }, []);
 
     const handleSubmit = async (e) => {
@@ -35,22 +44,18 @@ const UploadEpisode = () => {
         data.append('audio', audioFile);
 
         try {
-            const token = localStorage.getItem('token');
-            const res = await fetch('http://localhost:3000/api/admin/episodes', {
-                method: 'POST',
-                headers: { 'Authorization': `Bearer ${token}` },
-                body: data
+            await axiosClient.post('/admin/episodes', data, {
+                headers: { 'Content-Type': 'multipart/form-data' }
             });
-
-            const result = await res.json();
-            if (!res.ok) throw new Error(result.error || "Upload failed");
 
             setStatus({ type: 'success', message: 'Episode published successfully!' });
             setFormData({ ...formData, title: '', description: '' });
             setAudioFile(null);
 
         } catch (error) {
-            setStatus({ type: 'error', message: error.message });
+            console.error("Upload Error:", error);
+            const msg = error.response?.data?.message || error.response?.data?.error || "Upload failed";
+            setStatus({ type: 'error', message: msg });
         } finally {
             setLoading(false);
         }
@@ -59,7 +64,7 @@ const UploadEpisode = () => {
     return (
         <div className="flex h-screen bg-black text-white">
             <Sidebar />
-            <div className="ml-[15%] w-full p-10 overflow-y-auto">
+            <div className="ml-0 md:ml-[15%] w-full p-4 md:p-10 overflow-y-auto pt-16 md:pt-10">
                 <div className="max-w-2xl mx-auto">
                     <h1 className="text-3xl font-bold mb-8 flex items-center gap-3">
                         <PlayCircle className="text-blue-500" /> Publish New Episode

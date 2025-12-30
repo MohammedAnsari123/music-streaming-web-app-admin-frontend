@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import axiosClient from '../api/axiosClient';
 import Sidebar from '../components/Sidebar';
 import { Music, Mic, Trash2 } from 'lucide-react';
 
@@ -14,15 +15,11 @@ const AdminLibrary = () => {
     const fetchData = async () => {
         setLoading(true);
         try {
-            const endpoint = activeTab === 'songs'
-                ? 'http://localhost:3000/api/songs/all'
-                : 'http://localhost:3000/api/podcasts';
+            const endpoint = activeTab === 'songs' ? '/songs/all' : '/podcasts';
+            const res = await axiosClient.get(endpoint);
 
-            const res = await fetch(endpoint);
-            const data = await res.json();
-
-            if (Array.isArray(data)) {
-                setItems(data);
+            if (Array.isArray(res.data)) {
+                setItems(res.data);
             } else {
                 setItems([]);
             }
@@ -39,17 +36,11 @@ const AdminLibrary = () => {
         if (!confirm(`Are you sure you want to delete this ${type}?`)) return;
 
         try {
-            const token = localStorage.getItem('token');
             const endpoint = activeTab === 'songs'
-                ? `http://localhost:3000/api/songs/delete/${id}`
-                : `http://localhost:3000/api/admin/podcasts/${id}`;
+                ? `/songs/delete/${id}`
+                : `/admin/podcasts/${id}`;
 
-            const res = await fetch(endpoint, {
-                method: 'DELETE',
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-
-            if (!res.ok) throw new Error("Delete failed");
+            await axiosClient.delete(endpoint);
 
             // Optimistic update
             setItems(items.filter(item => item.id !== id));
@@ -64,7 +55,7 @@ const AdminLibrary = () => {
         <div className="flex h-screen bg-black text-white font-sans">
             <Sidebar />
 
-            <div className="ml-[15%] w-full p-8 overflow-y-auto">
+            <div className="ml-0 md:ml-[15%] w-full p-4 md:p-8 overflow-y-auto pt-16 md:pt-8">
                 <h1 className="text-3xl font-bold mb-8">Library Management</h1>
 
                 {/* Tabs */}

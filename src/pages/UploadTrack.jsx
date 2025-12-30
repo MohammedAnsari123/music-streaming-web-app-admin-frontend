@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import axiosClient from '../api/axiosClient';
 import Sidebar from '../components/Sidebar';
 import { Upload, Music, Image as ImageIcon, CheckCircle, AlertCircle } from 'lucide-react';
 
@@ -27,36 +28,33 @@ const UploadTrack = () => {
             return;
         }
 
-        const data = new FormData();
-        data.append('title', formData.title);
-        data.append('artist', formData.artist);
-        data.append('album', formData.album);
-        data.append('category', formData.category);
-        data.append('song', songFile);
-        data.append('image', imageFile);
-
         try {
-            const token = localStorage.getItem('token');
-            const res = await fetch('http://localhost:3000/api/admin/tracks', {
-                method: 'POST',
+            const data = new FormData();
+            data.append('title', formData.title);
+            data.append('artist', formData.artist);
+            data.append('album', formData.album);
+            data.append('category', formData.category);
+            data.append('song', songFile);
+            data.append('image', imageFile);
+
+            const res = await axiosClient.post('/admin/tracks', data, {
                 headers: {
-                    'Authorization': `Bearer ${token}`
-                },
-                body: data // FormData sets Content-Type boundary automatically
+                    'Content-Type': 'multipart/form-data'
+                }
             });
 
-            const result = await res.json();
-
-            if (!res.ok) throw new Error(result.message || result.error || "Upload failed");
-
+            // If success
             setStatus({ type: 'success', message: 'Track uploaded successfully!' });
+
             // Reset form
             setFormData({ title: '', artist: '', album: '', category: 'Pop' });
             setSongFile(null);
             setImageFile(null);
 
         } catch (error) {
-            setStatus({ type: 'error', message: error.message });
+            console.error("Upload Error:", error);
+            const msg = error.response?.data?.message || error.response?.data?.error || "Upload failed";
+            setStatus({ type: 'error', message: msg });
         } finally {
             setLoading(false);
         }
@@ -65,7 +63,7 @@ const UploadTrack = () => {
     return (
         <div className="flex h-screen bg-black text-white">
             <Sidebar />
-            <div className="ml-[15%] w-full p-10 overflow-y-auto">
+            <div className="ml-0 md:ml-[15%] w-full p-4 md:p-10 overflow-y-auto pt-16 md:pt-10">
                 <div className="max-w-2xl mx-auto">
                     <h1 className="text-3xl font-bold mb-8 flex items-center gap-3">
                         <Upload className="text-green-500" /> Upload New Track

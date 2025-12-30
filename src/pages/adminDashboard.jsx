@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react';
+import axiosClient from '../api/axiosClient';
 import Sidebar from '../components/Sidebar'
 import { Music, Users, HardDrive } from 'lucide-react'
 
@@ -11,12 +12,12 @@ const AdminDashboard = () => {
         try {
             // Parallel Fetch
             const [songsRes, podcastsRes] = await Promise.all([
-                fetch('http://localhost:3000/api/songs/all'),
-                fetch('http://localhost:3000/api/podcasts')
+                axiosClient.get('/songs/all'),
+                axiosClient.get('/podcasts')
             ]);
 
-            const songsData = await songsRes.json();
-            const podcastsData = await podcastsRes.json();
+            const songsData = songsRes.data;
+            const podcastsData = podcastsRes.data;
 
             if (Array.isArray(songsData)) setSongs(songsData);
             if (Array.isArray(podcastsData)) setPodcasts(podcastsData);
@@ -35,12 +36,7 @@ const AdminDashboard = () => {
     const handleDeleteSong = async (id) => {
         if (confirm("Are you sure you want to delete this song?")) {
             try {
-                const token = localStorage.getItem('token');
-                const res = await fetch(`http://localhost:3000/api/songs/delete/${id}`, {
-                    method: 'DELETE',
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                if (!res.ok) throw new Error('Failed');
+                await axiosClient.delete(`/songs/delete/${id}`);
                 fetchData();
             } catch (error) {
                 alert("Failed to delete song");
@@ -51,17 +47,7 @@ const AdminDashboard = () => {
     const handleDeletePodcast = async (id) => {
         if (confirm("Are you sure you want to delete this podcast? This will also delete all its episodes.")) {
             try {
-                const token = localStorage.getItem('token');
-                const res = await fetch(`http://localhost:3000/api/admin/podcasts/${id}`, {
-                    method: 'DELETE',
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-
-                if (!res.ok) {
-                    const data = await res.json();
-                    throw new Error(data.error || 'Failed to delete podcast');
-                }
-
+                await axiosClient.delete(`/admin/podcasts/${id}`);
                 // Refresh
                 fetchData();
             } catch (error) {
@@ -78,9 +64,9 @@ const AdminDashboard = () => {
     const totalCategories = new Set(songs.map(song => song.category)).size;
 
     return (
-        <div className="flex h-screen bg-black text-white">
+        <div className="flex h-screen bg-black text-white font-sans">
             <Sidebar />
-            <div className="ml-[15%] w-full p-10 overflow-y-auto">
+            <div className="ml-0 md:ml-[15%] w-full p-4 md:p-10 overflow-y-auto pt-16 md:pt-10">
                 <h1 className="text-3xl font-bold mb-8">Dashboard Overview</h1>
 
                 {/* Stats Cards */}

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import axiosClient from '../api/axiosClient';
 import Sidebar from '../components/Sidebar';
 import { Upload, Mic, Image as ImageIcon, CheckCircle, AlertCircle } from 'lucide-react';
 
@@ -30,22 +31,19 @@ const UploadPodcast = () => {
         data.append('image', imageFile);
 
         try {
-            const token = localStorage.getItem('token');
-            const res = await fetch('http://localhost:3000/api/admin/podcasts', {
-                method: 'POST',
-                headers: { 'Authorization': `Bearer ${token}` },
-                body: data
+            const res = await axiosClient.post('/admin/podcasts', data, {
+                headers: { 'Content-Type': 'multipart/form-data' }
             });
 
-            const result = await res.json();
-            if (!res.ok) throw new Error(result.error || "Upload failed");
-
+            // Success
             setStatus({ type: 'success', message: 'Podcast created successfully!' });
             setFormData({ title: '', publisher: '', description: '' });
             setImageFile(null);
 
         } catch (error) {
-            setStatus({ type: 'error', message: error.message });
+            console.error("Upload Error:", error);
+            const msg = error.response?.data?.message || error.response?.data?.error || "Upload failed";
+            setStatus({ type: 'error', message: msg });
         } finally {
             setLoading(false);
         }
@@ -55,7 +53,7 @@ const UploadPodcast = () => {
     return (
         <div className="flex h-screen bg-black text-white">
             <Sidebar />
-            <div className="ml-[15%] w-full p-10 overflow-y-auto">
+            <div className="ml-0 md:ml-[15%] w-full p-4 md:p-10 overflow-y-auto pt-16 md:pt-10">
                 <div className="max-w-2xl mx-auto">
                     <h1 className="text-3xl font-bold mb-8 flex items-center gap-3">
                         <Mic className="text-purple-500" /> Create New Podcast

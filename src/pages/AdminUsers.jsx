@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import axiosClient from '../api/axiosClient';
 import Sidebar from '../components/Sidebar';
 import { Users, Mail, Calendar } from 'lucide-react';
 
@@ -12,17 +13,11 @@ const AdminUsers = () => {
 
     const fetchUsers = async () => {
         try {
-            const token = localStorage.getItem('token');
-            const res = await fetch('http://localhost:3000/api/admin/users', {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-
-            if (!res.ok) throw new Error("Failed to fetch users");
-
-            const data = await res.json();
-            setUsers(data);
+            const res = await axiosClient.get('/admin/users');
+            setUsers(res.data);
         } catch (error) {
-            console.error(error);
+            console.error("Error fetching users:", error);
+            // No need to alert user explicitly for auth errors, standard error logging
         } finally {
             setLoading(false);
         }
@@ -32,7 +27,7 @@ const AdminUsers = () => {
         <div className="flex h-screen bg-black text-white font-sans">
             <Sidebar />
 
-            <div className="ml-[15%] w-full p-8 overflow-y-auto">
+            <div className="ml-0 md:ml-[15%] w-full p-4 md:p-8 overflow-y-auto pt-16 md:pt-8">
                 <h1 className="text-3xl font-bold mb-8 flex items-center gap-3">
                     <Users className="text-green-500" />
                     User Management
