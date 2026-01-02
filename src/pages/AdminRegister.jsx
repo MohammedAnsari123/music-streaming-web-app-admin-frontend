@@ -24,7 +24,7 @@ const AdminRegister = () => {
         setLoading(true);
 
         try {
-            const response = await fetch('http://localhost:3000/api/admin/register', {
+            const response = await fetch('https://music-streaming-web-app-backend.onrender.com/api/admin/register', {
                 method: 'POST',
                 headers: { 'content-type': 'application/json' },
                 body: JSON.stringify(formData)

@@ -30,7 +30,7 @@ const AdminUpload = () => {
         }
 
         try {
-            const res = await fetch('http://localhost:3000/api/songs/add', {
+            const res = await fetch('https://music-streaming-web-app-backend.onrender.com/api/songs/add', {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`
