@@ -40,7 +40,6 @@ const AdminUpload = () => {
             const data = await res.json();
             if (res.ok) {
                 alert('Song Uploaded Successfully!')
-                // Reset form
                 setTitle('');
                 setArtist('');
                 setAlbum('');

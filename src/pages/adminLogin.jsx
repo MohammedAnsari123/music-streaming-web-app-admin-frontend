@@ -1,11 +1,13 @@
 import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
+import { Eye, EyeOff } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import Particles from '../components/Particles'
 
 const adminLogin = () => {
     const [adminEmail, setAdminEmail] = useState('')
     const [adminPassword, setAdminPassword] = useState('')
+    const [showPassword, setShowPassword] = useState(false)
     const navigate = useNavigate();
 
     const { login } = useAuth();
@@ -28,11 +30,9 @@ const adminLogin = () => {
             const data = await response.json();
 
             if (response.ok) {
-                // Success
                 login(data.user, data.token)
                 navigate('/admin/dashboard')
             } else {
-                // Failure - specific error message
                 alert(data.error || 'Admin Login Failed')
             }
         } catch (error) {
@@ -78,18 +78,33 @@ const adminLogin = () => {
                         </div>
                         <div>
                             <label className="block text-gray-400 text-sm font-medium mb-2 pl-2">Password</label>
-                            <input
-                                className='w-full h-12 px-4 bg-black/40 border border-white/10 rounded-xl text-white placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-green-500/50 transition-all'
-                                onChange={(e) => setAdminPassword(e.target.value)}
-                                type="password"
-                                placeholder='••••••••'
-                            />
+                            <div className="relative">
+                                <input
+                                    className='w-full h-12 px-4 bg-black/40 border border-white/10 rounded-xl text-white placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-green-500/50 transition-all pr-12'
+                                    onChange={(e) => setAdminPassword(e.target.value)}
+                                    type={showPassword ? "text" : "password"}
+                                    placeholder='••••••••'
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
+                                >
+                                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                                </button>
+                            </div>
                         </div>
                     </div>
 
                     <button className='w-full mt-8 h-12 bg-white text-black hover:bg-gray-200 font-bold rounded-xl transition-all hover:scale-[1.02] shadow-lg'>
                         Authenticate
                     </button>
+
+                    <div className="mt-4 text-center">
+                        <Link to="/admin/register" className="text-sm text-gray-400 hover:text-green-500 transition-colors">
+                            Need an account? Register here
+                        </Link>
+                    </div>
 
                     <div className="mt-8 text-center">
                         <p className="text-xs text-gray-600">Restricted Area. Authorized Personnel Only.</p>

@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { ShieldAlert, CheckCircle } from 'lucide-react'
+import { ShieldAlert, CheckCircle, Eye, EyeOff } from 'lucide-react'
 import Particles from '../components/Particles'
 
 const AdminRegister = () => {
@@ -10,6 +10,8 @@ const AdminRegister = () => {
         password: '',
         secretKey: ''
     })
+    const [showPassword, setShowPassword] = useState(false)
+    const [showSecretKey, setShowSecretKey] = useState(false)
     const [loading, setLoading] = useState(false)
     const navigate = useNavigate();
 
@@ -84,11 +86,43 @@ const AdminRegister = () => {
                         <div className="grid grid-cols-2 gap-4">
                             <div>
                                 <label className="block text-gray-400 text-xs font-bold uppercase tracking-wider mb-2">Password</label>
-                                <input name="password" type="password" onChange={handleChange} className="w-full bg-white/5 border border-white/10 rounded-lg h-12 px-4 focus:border-green-500 focus:outline-none transition-colors" placeholder="••••••••" required />
+                                <div className="relative">
+                                    <input
+                                        name="password"
+                                        type={showPassword ? "text" : "password"}
+                                        onChange={handleChange}
+                                        className="w-full bg-white/5 border border-white/10 rounded-lg h-12 px-4 focus:border-green-500 focus:outline-none transition-colors pr-10"
+                                        placeholder="••••••••"
+                                        required
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
+                                    >
+                                        {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                                    </button>
+                                </div>
                             </div>
                             <div>
                                 <label className="block text-green-400 text-xs font-bold uppercase tracking-wider mb-2">Secret Key</label>
-                                <input name="secretKey" type="password" onChange={handleChange} className="w-full bg-green-500/10 border border-green-500/30 rounded-lg h-12 px-4 text-green-400 placeholder-green-700/50 focus:border-green-400 focus:outline-none transition-colors" placeholder="Invite Code" required />
+                                <div className="relative">
+                                    <input
+                                        name="secretKey"
+                                        type={showSecretKey ? "text" : "password"}
+                                        onChange={handleChange}
+                                        className="w-full bg-green-500/10 border border-green-500/30 rounded-lg h-12 px-4 text-green-400 placeholder-green-700/50 focus:border-green-400 focus:outline-none transition-colors pr-10"
+                                        placeholder="Invite Code"
+                                        required
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowSecretKey(!showSecretKey)}
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-green-600 hover:text-green-400 transition-colors"
+                                    >
+                                        {showSecretKey ? <EyeOff size={16} /> : <Eye size={16} />}
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>

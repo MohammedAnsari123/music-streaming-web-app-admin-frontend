@@ -1,6 +1,5 @@
 import axios from 'axios';
 
-// Create a configured instance of axios
 const axiosClient = axios.create({
     baseURL: 'http://localhost:3000/api',
     headers: {
@@ -8,7 +7,6 @@ const axiosClient = axios.create({
     }
 });
 
-// Request Interceptor: Attach Token
 axiosClient.interceptors.request.use(
     (config) => {
         const token = localStorage.getItem('token');
@@ -22,7 +20,6 @@ axiosClient.interceptors.request.use(
     }
 );
 
-// Response Interceptor: Handle 401 (Unauthorized)
 axiosClient.interceptors.response.use(
     (response) => {
         return response;
@@ -30,14 +27,10 @@ axiosClient.interceptors.response.use(
     (error) => {
         const { response } = error;
 
-        // Check if error is 401 (Unauthorized)
         if (response && response.status === 401) {
-            // Clear storage
             localStorage.removeItem('token');
             localStorage.removeItem('user');
 
-            // Redirect to login
-            // Using window.location to force a full refresh and clear state
             window.location.href = '/admin/login';
         }
 

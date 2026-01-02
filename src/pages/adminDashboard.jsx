@@ -10,7 +10,6 @@ const AdminDashboard = () => {
 
     const fetchData = async () => {
         try {
-            // Parallel Fetch
             const [songsRes, podcastsRes] = await Promise.all([
                 axiosClient.get('/songs/all'),
                 axiosClient.get('/podcasts')
@@ -48,7 +47,6 @@ const AdminDashboard = () => {
         if (confirm("Are you sure you want to delete this podcast? This will also delete all its episodes.")) {
             try {
                 await axiosClient.delete(`/admin/podcasts/${id}`);
-                // Refresh
                 fetchData();
             } catch (error) {
                 console.error(error);
@@ -57,7 +55,6 @@ const AdminDashboard = () => {
         }
     }
 
-    // Calculate simple stats
     const totalSongs = songs.length;
     const totalPodcasts = podcasts.length;
     const totalArtists = new Set(songs.map(song => song.artist)).size;
@@ -69,7 +66,6 @@ const AdminDashboard = () => {
             <div className="ml-0 md:ml-[15%] w-full p-4 md:p-10 overflow-y-auto pt-16 md:pt-10">
                 <h1 className="text-3xl font-bold mb-8">Dashboard Overview</h1>
 
-                {/* Stats Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
                     <div className="bg-gradient-to-br from-green-900 to-green-700 p-6 rounded-xl flex items-center gap-4 shadow-lg">
                         <div className="bg-black/20 p-3 rounded-full">
@@ -110,7 +106,6 @@ const AdminDashboard = () => {
                 </div>
 
                 <div className="grid lg:grid-cols-1 gap-8">
-                    {/* Songs Table */}
                     <div className="bg-[#181818] rounded-xl overflow-hidden border border-[#282828]">
                         <div className="p-6 border-b border-[#282828]">
                             <h2 className="text-xl font-bold">Music Library</h2>
@@ -144,7 +139,6 @@ const AdminDashboard = () => {
                         </div>
                     </div>
 
-                    {/* Podcasts Table */}
                     <div className="bg-[#181818] rounded-xl overflow-hidden border border-[#282828]">
                         <div className="p-6 border-b border-[#282828]">
                             <h2 className="text-xl font-bold">Podcast Library</h2>

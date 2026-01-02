@@ -15,7 +15,6 @@ const Sidebar = () => {
 
     return (
         <>
-            {/* Mobile Toggle Button */}
             <button
                 onClick={() => setIsOpen(!isOpen)}
                 className="md:hidden fixed top-4 left-4 z-50 bg-black/50 p-2 rounded-full text-white backdrop-blur-sm border border-white/10"
@@ -23,7 +22,6 @@ const Sidebar = () => {
                 {isOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
 
-            {/* Overlay for mobile */}
             {isOpen && (
                 <div
                     className="md:hidden fixed inset-0 z-30 bg-black/80 backdrop-blur-sm"

@@ -17,7 +17,6 @@ const AdminUsers = () => {
             setUsers(res.data);
         } catch (error) {
             console.error("Error fetching users:", error);
-            // No need to alert user explicitly for auth errors, standard error logging
         } finally {
             setLoading(false);
         }
@@ -55,7 +54,6 @@ const AdminUsers = () => {
                                     users.map(user => (
                                         <tr key={user.id} className="border-b border-[#282828] hover:bg-[#202020] transition-colors">
                                             <td className="p-4 pl-6 font-medium">
-                                                {/* Fallback for Name if not present in metadata */}
                                                 {(user.raw_user_meta_data?.full_name || user.raw_user_meta_data?.name) || 'User'}
                                             </td>
                                             <td className="p-4 text-gray-400 flex items-center gap-2">

@@ -35,7 +35,6 @@ const UploadPodcast = () => {
                 headers: { 'Content-Type': 'multipart/form-data' }
             });
 
-            // Success
             setStatus({ type: 'success', message: 'Podcast created successfully!' });
             setFormData({ title: '', publisher: '', description: '' });
             setImageFile(null);
@@ -49,7 +48,6 @@ const UploadPodcast = () => {
         }
     };
 
-    // ... (Almost identical UI structure to UploadTrack, simplified for brevity)
     return (
         <div className="flex h-screen bg-black text-white">
             <Sidebar />

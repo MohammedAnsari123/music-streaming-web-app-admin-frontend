@@ -20,7 +20,6 @@ const AdminLanding = () => {
                 />
             </div>
 
-            {/* Navbar Placeholder */}
             <nav className="relative z-10 flex justify-between items-center px-8 py-6 backdrop-blur-sm border-b border-white/5">
                 <div className="flex items-center gap-2">
                     <ShieldCheck className="text-green-500 w-8 h-8" />
@@ -60,7 +59,6 @@ const AdminLanding = () => {
                     </div>
                 </div>
 
-                {/* Feature Grid */}
                 <div className="mt-24 grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto w-full px-4">
                     {[
                         { icon: Server, title: "Content Management", desc: "Upload and manage high-fidelity audio assets." },

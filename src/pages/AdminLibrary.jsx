@@ -4,7 +4,7 @@ import Sidebar from '../components/Sidebar';
 import { Music, Mic, Trash2 } from 'lucide-react';
 
 const AdminLibrary = () => {
-    const [activeTab, setActiveTab] = useState('songs'); // 'songs' or 'podcasts'
+    const [activeTab, setActiveTab] = useState('songs');
     const [items, setItems] = useState([]);
     const [loading, setLoading] = useState(true);
 
@@ -42,7 +42,6 @@ const AdminLibrary = () => {
 
             await axiosClient.delete(endpoint);
 
-            // Optimistic update
             setItems(items.filter(item => item.id !== id));
 
         } catch (error) {
@@ -58,7 +57,6 @@ const AdminLibrary = () => {
             <div className="ml-0 md:ml-[15%] w-full p-4 md:p-8 overflow-y-auto pt-16 md:pt-8">
                 <h1 className="text-3xl font-bold mb-8">Library Management</h1>
 
-                {/* Tabs */}
                 <div className="flex gap-6 mb-8 border-b border-[#333]">
                     <button
                         onClick={() => setActiveTab('songs')}
@@ -80,7 +78,6 @@ const AdminLibrary = () => {
                     </button>
                 </div>
 
-                {/* Content Table */}
                 <div className="bg-[#181818] rounded-xl overflow-hidden border border-[#282828]">
                     {loading ? (
                         <div className="p-10 text-center text-gray-500">Loading...</div>

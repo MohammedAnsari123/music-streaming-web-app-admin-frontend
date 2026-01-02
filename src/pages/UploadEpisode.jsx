@@ -18,9 +18,6 @@ const UploadEpisode = () => {
     useEffect(() => {
         const fetchPodcasts = async () => {
             try {
-                // Note: /api/podcasts is likely public, but we can use axiosClient.
-                // If it needs auth, axiosClient handles it. If public, it still works.
-                // Assuming it's the public endpoint, using axiosClient ensures base URL is correct.
                 const res = await axiosClient.get('/podcasts');
                 setPodcasts(res.data);
             } catch (err) {

@@ -8,12 +8,12 @@ const UploadTrack = () => {
         title: '',
         artist: '',
         album: '',
-        category: 'Pop' // Default
+        category: 'Pop'
     });
     const [songFile, setSongFile] = useState(null);
     const [imageFile, setImageFile] = useState(null);
     const [loading, setLoading] = useState(false);
-    const [status, setStatus] = useState(null); // { type: 'success' | 'error', message: '' }
+    const [status, setStatus] = useState(null);
 
     const CATEGORIES = ['Pop', 'Rock', 'Hip-Hop', 'Jazz', 'Electronic', 'Classical', 'Indie', 'Podcast'];
 
@@ -43,10 +43,8 @@ const UploadTrack = () => {
                 }
             });
 
-            // If success
             setStatus({ type: 'success', message: 'Track uploaded successfully!' });
 
-            // Reset form
             setFormData({ title: '', artist: '', album: '', category: 'Pop' });
             setSongFile(null);
             setImageFile(null);
@@ -71,7 +69,6 @@ const UploadTrack = () => {
 
                     <form onSubmit={handleSubmit} className="space-y-6 bg-[#181818] p-8 rounded-xl border border-[#282828]">
 
-                        {/* Status Message */}
                         {status && (
                             <div className={`p-4 rounded-lg flex items-center gap-3 ${status.type === 'success' ? 'bg-green-500/20 text-green-400 border border-green-500/30' : 'bg-red-500/20 text-red-400 border border-red-500/30'
                                 }`}>
@@ -128,7 +125,6 @@ const UploadTrack = () => {
                             </div>
                         </div>
 
-                        {/* File Uploads */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
                             <div className="border-2 border-dashed border-[#333] hover:border-green-500 rounded-xl p-6 text-center transition group">
                                 <input
